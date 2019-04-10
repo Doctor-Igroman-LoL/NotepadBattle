@@ -65,7 +65,8 @@ class MyApp(ShowBase):
         self.btmMagic = self.setButtom(('Магия', '', 'Колдовать? ', ''), self.magic, (.4, 0,-0.37)) 
         self.btmAttackSkill1 = self.setButtom(('Толчек', 'Толчек!!!', 'Толкнуть?', ''), self.damage, (-.4, 0,-0.37))
         self.btmAttackSkill2 = self.setButtom(('Уколоть', 'Удар!!!', 'Проткнуть?', ''), self.damage, (0, 0,-0.37))
-        self.btmAttackSkill3 = self.setButtom(('Размахивать', 'Удар!!!', 'Атаковать?', ''), self.damage, (.4, 0,-0.37))         
+        self.btmAttackSkill3 = self.setButtom(('Размахивать', 'Удар!!!', 'Атаковать?', ''), self.damage, (.4, 0,-0.37))   
+        #self.btmAttack['text'] = ('1', '2', '3', '') #DGG.DISABLED  
         # ~~o~~o Настройка кнопок o~~o~~ #
         self.setButtomPresets(self.btmAttack, 'Здесь размещены атакующие скиллы')
         self.setButtomPresets(self.btmGuard, 'Здесь размещены защищающие скиллы')
@@ -92,7 +93,7 @@ class MyApp(ShowBase):
 
     #~~o~~o ПКМ возвращает в предыдущие меню навыков o~~o~~#
     def returnMenu(self, listButton):
-        [button.bind(DGG.B3PRESS, self.basicSkills) for button in listButton] 
+        [button.bind(DGG.B3PRESS, self.basicSkills) for button in listButton]   
 
     #~~o~~o Метод который прячит или показывает список кнопок o~~o~~#
     def buttonMenu(self, visible, listButton):
@@ -147,6 +148,10 @@ class MyApp(ShowBase):
         self.enemy_hp_bar.updateBar(self.enemyCurrentHP)        
         self.actionDisplay.setText('Текущее здоровье врага: ' + str(self.enemy.hp))
         self.turn = 'Enemy'
+        self.time = taskMgr.add(self.timerTurn, 'timer') 
+
+    def timerTurn(self, task):
+        return task.time
 
     #~~o~~o Метод высчитывание удара врага по герою
     def attackEnemy(self):
@@ -157,12 +162,13 @@ class MyApp(ShowBase):
     #~~o~~o Основной цикл битвы
     def startBattle(self, task):
         if self.turn == 'Player':
-            return task.cont
-        elif self.turn == 'Enemy':
-            time.sleep(2.5)            
+            pass
+            #return task.cont
+        elif self.turn == 'Enemy':           
             self.attackEnemy()
-            self.turn = 'Player'
-            return task.cont
+            if self.timerTurn() < 4.0:       #task.time < 4.0:
+                self.turn = 'Player'
+                return task.again
 
     #~~o~~o Метод проверяющий жив ли аппонент
     def alive(self, actor, enemy, task):
