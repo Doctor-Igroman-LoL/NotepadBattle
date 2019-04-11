@@ -16,6 +16,8 @@ class MyApp(ShowBase):
         self.background = self.setElement('background', (0, -2, 0), (1.5, 0 ,1))
         self.notebook = self.setElement('notebook', (0, -2, 0), (1.5, 0 ,1))
         self.loadButtoms() 
+        self.save_timer = None
+        self.status_timer = False
         self.turn = 'Player'
         
         # ~~o~~o~~o~~o~~o~~o Отображение Врага o~~o~~o~~o~~o~~o~~ #
@@ -148,9 +150,10 @@ class MyApp(ShowBase):
         self.enemy_hp_bar.updateBar(self.enemyCurrentHP)        
         self.actionDisplay.setText('Текущее здоровье врага: ' + str(self.enemy.hp))
         self.turn = 'Enemy'
-        self.time = taskMgr.add(self.timerTurn, 'timer') 
+        #self.time = taskMgr.add(self.timerTurn, 'timer') 
 
-    def timerTurn(self, task):
+    def step(self, task):
+        self.save_timer 
         return task.time
 
     #~~o~~o Метод высчитывание удара врага по герою
@@ -162,13 +165,15 @@ class MyApp(ShowBase):
     #~~o~~o Основной цикл битвы
     def startBattle(self, task):
         if self.turn == 'Player':
-            pass
-            #return task.cont
-        elif self.turn == 'Enemy':           
-            self.attackEnemy()
-            if self.timerTurn() < 4.0:       #task.time < 4.0:
+            self.status_timer = False
+        elif self.turn == 'Enemy':
+            if self.status_timer == False:
+                self.save_timer = task.time
+            self.status_timer = True
+            if self.save_timer + 3.0 < task.time:
+                self.attackEnemy()
                 self.turn = 'Player'
-                return task.again
+        return task.cont
 
     #~~o~~o Метод проверяющий жив ли аппонент
     def alive(self, actor, enemy, task):
