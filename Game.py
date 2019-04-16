@@ -165,15 +165,26 @@ class MyApp(ShowBase):
     #~~o~~o Основной цикл битвы
     def startBattle(self, task):
         if self.turn == 'Player':
-            self.status_timer = False
+            pass
         elif self.turn == 'Enemy':
             if self.status_timer == False:
                 self.save_timer = task.time
-            self.status_timer = True
-            if self.save_timer + 3.0 < task.time:
-                self.attackEnemy()
-                self.turn = 'Player'
+                self.status_timer = True
+            else:
+                if self.save_timer + 3.0 < task.time:
+                    self.attackEnemy()
+                    self.outputActions(['Hello', 'Bye'])
+                    self.turn = 'Player'
+                    self.status_timer = False
         return task.cont
+
+    def outputActions(self, news):
+        taskMgr.doMethodLater(2, self.message, 'message', extraArgs=[news], appendTask=True)
+
+    def message(self, news, task):
+        for messege in news:
+            self.actionDisplay.setText(messege)
+            return task.done
 
     #~~o~~o Метод проверяющий жив ли аппонент
     def alive(self, actor, enemy, task):
