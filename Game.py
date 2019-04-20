@@ -164,17 +164,20 @@ class MyApp(ShowBase):
 
     #~~o~~o Основной цикл битвы
     def startBattle(self, task):
+        # message
         if self.turn == 'Player':
             pass
         elif self.turn == 'Enemy':
             if self.status_timer == False:
                 self.save_timer = task.time
                 self.status_timer = True
+                # message
             else:
                 if self.save_timer + 3.0 < task.time:
                     self.attackEnemy()
                     self.outputActions(['Hello', 'Bye'])
                     self.turn = 'Player'
+                    #message
                     self.status_timer = False
         return task.cont
 
