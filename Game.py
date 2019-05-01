@@ -19,6 +19,7 @@ class MyApp(ShowBase):
         self.save_timer = None
         self.status_timer = False
         self.turn = 'Player'
+        self.list_action = ['Hello', 'Bye']
         
         # ~~o~~o~~o~~o~~o~~o Отображение Врага o~~o~~o~~o~~o~~o~~ #
 
@@ -175,19 +176,25 @@ class MyApp(ShowBase):
             else:
                 if self.save_timer + 3.0 < task.time:
                     self.attackEnemy()
-                    self.outputActions(['Hello', 'Bye'])
+                    if self.outputActions(self.list_action, task):
+                        return task.cont
                     self.turn = 'Player'
                     #message
                     self.status_timer = False
         return task.cont
 
-    def outputActions(self, news):
-        taskMgr.doMethodLater(2, self.message, 'message', extraArgs=[news], appendTask=True)
+    def outputActions(self, news, task):
+        if news:
+            taskMgr.doMethodLater(2, self.message, 'message', extraArgs=[news[0]], appendTask=True)
+            news.pop(0)
+            if news:
+                return True
 
     def message(self, news, task):
-        for messege in news:
-            self.actionDisplay.setText(messege)
-            return task.done
+        #for messege in news:
+        #    if messege:
+        self.actionDisplay.setText(news)
+        return task.done
 
     #~~o~~o Метод проверяющий жив ли аппонент
     def alive(self, actor, enemy, task):
