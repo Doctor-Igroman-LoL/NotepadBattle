@@ -151,7 +151,6 @@ class MyApp(ShowBase):
         self.enemy_hp_bar.updateBar(self.enemyCurrentHP)        
         self.actionDisplay.setText('Текущее здоровье врага: ' + str(self.enemy.hp))
         self.turn = 'Enemy'
-        #self.time = taskMgr.add(self.timerTurn, 'timer') 
 
     def step(self, task):
         self.save_timer 
@@ -176,25 +175,20 @@ class MyApp(ShowBase):
             else:
                 if self.save_timer + 3.0 < task.time:
                     self.attackEnemy()
-                    if self.outputActions(self.list_action, task):
-                        return task.cont
+                    self.outputActions(task)
                     self.turn = 'Player'
                     #message
                     self.status_timer = False
         return task.cont
 
-    def outputActions(self, news, task):
-        if news:
-            taskMgr.doMethodLater(2, self.message, 'message', extraArgs=[news[0]], appendTask=True)
-            news.pop(0)
-            if news:
-                return True
+    def outputActions(self, task):
+        taskMgr.doMethodLater(2, self.message, 'message')
 
-    def message(self, news, task):
-        #for messege in news:
-        #    if messege:
-        self.actionDisplay.setText(news)
-        return task.done
+    def message(self, task):
+        if len(self.list_action) > 0:
+            self.actionDisplay.setText(self.list_action[0])
+            del self.list_action[0]
+        return task.again
 
     #~~o~~o Метод проверяющий жив ли аппонент
     def alive(self, actor, enemy, task):
