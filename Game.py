@@ -89,9 +89,13 @@ class MyApp(ShowBase):
         self.buttonMenu('hide', [self.btmAttack,self.btmGuard,self.btmMagic])
         self.buttonMenu('show', [self.btmAttackSkill1,self.btmAttackSkill2,self.btmAttackSkill3])
 
+    def lockButtons(self):
+        self.buttonMenu('hide', [self.btmAttack,self.btmGuard,self.btmMagic])
+        self.buttonMenu('show', [self.btmAttackSkill1,self.btmAttackSkill2,self.btmAttackSkill3])
+
     #~~o~~o Показывает инфу навыка o~~o~~#
     def setButtomPresets(self, button, text):
-        button.bind(DGG.WITHIN, self.skDisplay, extraArgs = [text] )
+        button.bind(DGG.WITHIN, self.skDisplay, extraArgs = [text])
         button.bind(DGG.WITHOUT, self.skDisplayClear)
 
     #~~o~~o ПКМ возвращает в предыдущие меню навыков o~~o~~#
@@ -104,6 +108,9 @@ class MyApp(ShowBase):
             [button.show() for button in listButton] 
         elif visible == 'hide':
             [button.hide() for button in listButton]
+        elif visible == 'off':
+            for button in listButton:
+                button['state'] = DGG.DISABLED
 
     #~~o~~o Метод для загрузки изображений и не большие настройки для удобства
     def setElement(self, nameImage, position, scaleImage, colorImage=(1,1,1,1)):
@@ -175,19 +182,23 @@ class MyApp(ShowBase):
             else:
                 if self.save_timer + 3.0 < task.time:
                     self.attackEnemy()
-                    self.outputActions(task)
+                    self.outputActions()
                     self.turn = 'Player'
                     #message
                     self.status_timer = False
         return task.cont
 
-    def outputActions(self, task):
+    def outputActions(self):
+
         taskMgr.doMethodLater(2, self.message, 'message')
 
     def message(self, task):
         if len(self.list_action) > 0:
             self.actionDisplay.setText(self.list_action[0])
             del self.list_action[0]
+        else:
+            self.basicSkills()
+            return task.done
         return task.again
 
     #~~o~~o Метод проверяющий жив ли аппонент
