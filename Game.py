@@ -90,8 +90,13 @@ class MyApp(ShowBase):
         self.buttonMenu('show', [self.btmAttackSkill1,self.btmAttackSkill2,self.btmAttackSkill3])
 
     def lockButtons(self):
-        self.buttonMenu('hide', [self.btmAttack,self.btmGuard,self.btmMagic])
-        self.buttonMenu('show', [self.btmAttackSkill1,self.btmAttackSkill2,self.btmAttackSkill3])
+        self.buttonMenu('hide', [
+                                self.btmAttack,
+                                self.btmGuard,
+                                self.btmMagic,
+                                self.btmAttackSkill1,
+                                self.btmAttackSkill2,
+                                self.btmAttackSkill3])
 
     #~~o~~o Показывает инфу навыка o~~o~~#
     def setButtomPresets(self, button, text):
@@ -108,9 +113,6 @@ class MyApp(ShowBase):
             [button.show() for button in listButton] 
         elif visible == 'hide':
             [button.hide() for button in listButton]
-        elif visible == 'off':
-            for button in listButton:
-                button['state'] = DGG.DISABLED
 
     #~~o~~o Метод для загрузки изображений и не большие настройки для удобства
     def setElement(self, nameImage, position, scaleImage, colorImage=(1,1,1,1)):
@@ -155,13 +157,10 @@ class MyApp(ShowBase):
     def damage(self):
         self.enemy.hp -= self.actor.attack
         self.enemyCurrentHP = self.enemy.converterHP()     
-        self.enemy_hp_bar.updateBar(self.enemyCurrentHP)        
+        self.enemy_hp_bar.updateBar(self.enemyCurrentHP)   
+        self.lockButtons()
         self.actionDisplay.setText('Текущее здоровье врага: ' + str(self.enemy.hp))
         self.turn = 'Enemy'
-
-    def step(self, task):
-        self.save_timer 
-        return task.time
 
     #~~o~~o Метод высчитывание удара врага по герою
     def attackEnemy(self):
@@ -178,7 +177,6 @@ class MyApp(ShowBase):
             if self.status_timer == False:
                 self.save_timer = task.time
                 self.status_timer = True
-                # message
             else:
                 if self.save_timer + 3.0 < task.time:
                     self.attackEnemy()
@@ -189,7 +187,7 @@ class MyApp(ShowBase):
         return task.cont
 
     def outputActions(self):
-
+        self.lockButtons()
         taskMgr.doMethodLater(2, self.message, 'message')
 
     def message(self, task):
