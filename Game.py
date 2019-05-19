@@ -217,31 +217,7 @@ class MyApp(ShowBase):
 
 	#def passDef(text):
 	#	entry.set(text)
-
-
-class GameBattle:
-
-    def __init__(self, player, enemy):
-        self.player = player
-        self.enemy = enemy
-        self.turn = 1   # Player
-
-    def run(self):
-        while True:
-            pass
-            
-
-    def actionAttack(attacking, getting):
-        getting.hp -= attacking.attack
-
-
-class Setting:
-
-    def __init__(self):
-        pass
-
 '''
-
 class GameUnit:
 
     def __init__(self, name, hp, mp, attack):
